@@ -3,7 +3,10 @@
     padding: 0;
     box-sizing: border-box;
     font-family: "Red Hat Text", sans-serif;
+}
 
+.product-listing {
+    border: 1px solid red;
 }
 
 .product-listing h1{
@@ -17,6 +20,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    border: 1px solid blue;
 }
 
 .product-card {
@@ -40,17 +44,18 @@
     height: 100%;
     object-fit: cover;
     border-radius: 10px;
+    /* border: 1px solid violet; */
 }
 
-.product-image button {
+.product-image .cart-control {
     display: flex;
     max-width: 300px;
-    padding: 14px 30px;
+    padding: 14px 25px;
     border-radius: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
     background-color: white;
     border: 1px solid grey;
     position: absolute;
@@ -59,6 +64,7 @@
     transform: translate(-50%, -50%);
     cursor: pointer;
 }
+
 
 .product-image button img {
     width: 24px;
@@ -90,4 +96,37 @@
     color: hsl(14, 86%, 42%);
     font-size: 1.2rem;
     font-weight: 700;
+}
+
+.plus, .minus{
+    width: 20px;
+    height: 20px;
+    padding: 10px;
+    border: 2px solid white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.plus .plus-img{
+    width: 15px;
+    height: 15px;
+}
+
+.minus .minus-img  {
+    width: 15px;
+    height: 4px;
+}
+
+.cart-control.active{
+    background-color: hsl(14, 86%, 42%);
+    /* border: 2px solid hsl(14, 86%, 42%); */
+}
+
+.products-img.active-img {
+    border: 2px solid hsl(14, 86%, 42%);
+}
+.quantity {
+    color: white;
 }
