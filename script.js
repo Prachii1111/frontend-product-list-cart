@@ -64,12 +64,12 @@ productContainer.addEventListener('click', (e) => {
     }
 
     // CLICK: +
-    if (e.target.classList.contains("plus")) {
+    if (e.target.closest(".plus")) {
         quantity++;
     }
 
     // CLICK: -
-    if (e.target.classList.contains("minus") && quantity > 0) {
+    if (e.target.closest(".minus") && quantity > 0) {
         quantity--;
     }
 
@@ -138,8 +138,13 @@ function renderButton(button, qty) {
     // creating cart container
     const cartContainer = document.createElement("div");
     cartContainer.classList.add("cart-container");
-    document.body.appendChild(cartContainer);
-    // const productContent = card.getElementsByTagName("p");
+
+    // const cartWrapper = document.createElement("div");
+    // cartWrapper.classList.add("cart-wrapper");
+
+    // cartContainer.appendChild(cartWrapper);
+
+    const productListing = document.querySelector(".product-listing");
 
 function renderCart() {
     const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -150,20 +155,23 @@ function renderCart() {
     );
 
     cartContainer.innerHTML = `
-        <h2>Your Cart (${cart.length})</h2>
+        <h2>Your Cart (${totalItems})</h2>
 
         <ul class="cart-list">
             ${cart.map(item => `
                 <li class="cart-item">
                 <div class="cart-left">
                     <p class="item-name">${item.id}</p>
-                    <p class="item-meta">
-                    <span class="qty">${item.qty}x</span>
-                    <span class="price">@ $${item.price.toFixed(2)}</span>
-                    <span class="subtotal">$${(item.qty * item.price).toFixed(2)}</span>
-                    </p>
+                    <div class="item-meta">
+                        <span class="qty">${item.qty}x</span>
+                        <span class="price">@ $${item.price.toFixed(2)}</span>
+                        <span class="subtotal">$${(item.qty * item.price).toFixed(2)}</span>
+                    </div>
                 </div>
-            <button class="remove-btn" data-id="${item.id}">✕</button>
+                <div class="cart-right">
+                    <img class="remove-btn" src="./assets/images/icon-remove-item.svg" 
+                    data-id="${item.id}">
+                </div>
         </li>
         `).join("")}
         </ul>
@@ -174,12 +182,19 @@ function renderCart() {
         </div>
 
         <div class="delivery">
-            🌱 This is a carbon-neutral delivery
+            <img src="./assets/images/icon-carbon-neutral.svg">
+            <span>This is a <strong>carbon-neutral</strong> delivery</span>
         </div>
 
     <button class="confirm-btn">Confirm Order</button>
     `;  
+
+        productListing.appendChild(cartContainer);
+
+    // productContainer.appendChild(cartContainer);
+
 }
+
 
 
 // remove items from cart array
