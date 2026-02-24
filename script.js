@@ -44,6 +44,16 @@ async function fetchProducts() {
 
 fetchProducts();
 
+    // const cartSection = document.createElement("div");
+    // cartSection.classList.add("right-cart-section");
+
+    // cartSection.innerHTML = `
+    //     <figure class="cart-image">
+    //         <img src="./assets/images/illustration-empty-cart.svg" alt="">
+    //     </figure>
+    // `
+
+
 productContainer.addEventListener('click', (e) => {
     const button = e.target.closest(".cart-control");
     if (!button) return; 
@@ -114,10 +124,12 @@ productContainer.addEventListener('click', (e) => {
 function renderButton(button, qty) {
 
     if (qty <= 0) {
+        button.classList.remove("active");
         button.classList.add("add-state");
+
         button.innerHTML = `
             <img src="./assets/images/icon-add-to-cart.svg" alt="add">
-            <span>Add to Cart</span>
+            <span class="add-to-cart-btn">Add to Cart</span>
         `;
         button.dataset.qty = 0;
         
@@ -135,66 +147,154 @@ function renderButton(button, qty) {
     }
 }
 
+    // const productListing = document.querySelector(".product-listing");
+
     // creating cart container
-    const cartContainer = document.createElement("div");
-    cartContainer.classList.add("cart-container");
+
+    // const cartContainer = document.createElement("div");
+    // cartContainer.classList.add("right-cart-section");
+
+    const cartContainer = document.querySelector(".right-cart-section");
+
+    const cartContent = document.createElement("div");
+    cartContent.classList.add("cart-container");
+    
+    cartContainer.appendChild(cartContent);
+
+    // cartContainer.innerHTML = `
+    //     <div class="cart-section">
+    //         <h2>Your Cart (0)</h2>
+    //         <figure class="cart-image">
+    //             <img src="./assets/images/illustration-empty-cart.svg" alt="">
+    //             <span>Your added items will appear here</span>
+    //         </figure> 
+    //     </div>
+    // `
+    // productListing.appendChild(cartContainer);
+
+    renderCart();
 
     // const cartWrapper = document.createElement("div");
     // cartWrapper.classList.add("cart-wrapper");
 
     // cartContainer.appendChild(cartWrapper);
 
-    const productListing = document.querySelector(".product-listing");
 
-function renderCart() {
-    const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+    // function renderCart() {
+    //     const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
 
-    const orderTotal = cart.reduce(
-        (sum, item) => sum + item.qty * item.price,
-        0
-    );
+    //     const orderTotal = cart.reduce(
+    //         (sum, item) => sum + item.qty * item.price,
+    //         0
+    //     );
 
-    cartContainer.innerHTML = `
-        <h2>Your Cart (${totalItems})</h2>
+    //     if (cart.length === 0) {
+    //     cartContent.innerHTML = `
+    //         <figure class="cart-image">
+    //             <img src="./assets/images/illustration-empty-cart.svg">
+    //             <span>Your added items will appear here</span>
+    //         </figure>
+    //     `;
+    //     return;
+    // }
 
-        <ul class="cart-list">
-            ${cart.map(item => `
-                <li class="cart-item">
-                <div class="cart-left">
-                    <p class="item-name">${item.id}</p>
-                    <div class="item-meta">
-                        <span class="qty">${item.qty}x</span>
-                        <span class="price">@ $${item.price.toFixed(2)}</span>
-                        <span class="subtotal">$${(item.qty * item.price).toFixed(2)}</span>
-                    </div>
-                </div>
-                <div class="cart-right">
-                    <img class="remove-btn" src="./assets/images/icon-remove-item.svg" 
-                    data-id="${item.id}">
-                </div>
+    // cartContent.innerHTML = `
+    //     <h2>Your Cart (${totalItems})</h2>
+
+    //     <ul class="cart-list">
+    //         ${cart.map(item => `
+    //             <li class="cart-item">
+    //             <div class="cart-left">
+    //                 <p class="item-name">${item.id}</p>
+    //                 <div class="item-meta">
+    //                     <span class="qty">${item.qty}x</span>
+    //                     <span class="price">@ $${item.price.toFixed(2)}</span>
+    //                     <span class="subtotal">$${(item.qty * item.price).toFixed(2)}</span>
+    //                 </div>
+    //             </div>
+    //             <div class="cart-right">
+    //                 <img class="remove-btn" src="./assets/images/icon-remove-item.svg" 
+    //                 data-id="${item.id}">
+    //             </div>
+    //     </li>
+    //     `).join("")}
+    //     </ul>
+
+    //     <div class="order-total">
+    //         <span>Order Total</span>
+    //         <strong>$${orderTotal.toFixed(2)}</strong>
+    //     </div>
+
+    //     <div class="delivery">
+    //         <img src="./assets/images/icon-carbon-neutral.svg">
+    //         <span>This is a <strong>carbon-neutral</strong> delivery</span>
+    //     </div>
+
+    // <button class="confirm-btn">Confirm Order</button>
+    // `;  
+    // }
+
+
+    function renderCart() {
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+
+  const orderTotal = cart.reduce(
+    (sum, item) => sum + item.qty * item.price,
+    0
+  );
+
+  // EMPTY CART
+  if (cart.length === 0) {
+    cartContent.innerHTML = `
+      <h2>Your Cart (0)</h2>
+      <figure class="cart-image">
+        <img src="./assets/images/illustration-empty-cart.svg">
+        <span>Your added items will appear here</span>
+      </figure>
+    `;
+    return;
+  }
+
+  // FILLED CART
+  cartContent.innerHTML = `
+    <h2>Your Cart (${totalItems})</h2>
+
+    <ul class="cart-list">
+      ${cart.map(item => `
+        <li class="cart-item">
+          <div class="cart-left">
+            <p class="item-name">${item.id}</p>
+            <div class="item-meta">
+              <span class="qty">${item.qty}x</span>
+              <span class="price">@ $${item.price.toFixed(2)}</span>
+              <span class="subtotal">$${(item.qty * item.price).toFixed(2)}</span>
+            </div>
+          </div>
+
+          <div class="cart-right">
+            <img class="remove-btn"
+              src="./assets/images/icon-remove-item.svg"
+              data-id="${item.id}">
+          </div>
         </li>
-        `).join("")}
-        </ul>
 
-        <div class="order-total">
-            <span>Order Total</span>
-            <strong>$${orderTotal.toFixed(2)}</strong>
-        </div>
+        <hr class="hr-rule">
+      `).join("")}
+    </ul>
 
-        <div class="delivery">
-            <img src="./assets/images/icon-carbon-neutral.svg">
-            <span>This is a <strong>carbon-neutral</strong> delivery</span>
-        </div>
+    <div class="order-total">
+      <span>Order Total</span>
+      <strong>$${orderTotal.toFixed(2)}</strong>
+    </div>
+
+    <div class="delivery">
+      <img src="./assets/images/icon-carbon-neutral.svg">
+      <span>This is a <strong>carbon-neutral</strong> delivery</span>
+    </div>
 
     <button class="confirm-btn">Confirm Order</button>
-    `;  
-
-        productListing.appendChild(cartContainer);
-
-    // productContainer.appendChild(cartContainer);
-
+  `;
 }
-
 
 
 // remove items from cart array
