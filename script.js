@@ -1,4 +1,5 @@
 const productContainer = document.querySelector(".product-container");
+const modal = document.querySelector(".confirm-modal");
 
 // store all selected items
 const cart = [];
@@ -7,10 +8,6 @@ async function fetchProducts() {
     try {
         const response = await fetch('./data.json');
         const products = await response.json();
-
-        // console.log(response);
-        // console.log(products);
-        // console.log(products.length);
 
         products.forEach(product => {
             const card = document.createElement("div");
@@ -44,16 +41,6 @@ async function fetchProducts() {
 
 fetchProducts();
 
-    // const cartSection = document.createElement("div");
-    // cartSection.classList.add("right-cart-section");
-
-    // cartSection.innerHTML = `
-    //     <figure class="cart-image">
-    //         <img src="./assets/images/illustration-empty-cart.svg" alt="">
-    //     </figure>
-    // `
-
-
 productContainer.addEventListener('click', (e) => {
     const button = e.target.closest(".cart-control");
     if (!button) return; 
@@ -61,7 +48,7 @@ productContainer.addEventListener('click', (e) => {
     button.classList.add("active");
 
     const card = button.closest(".product-card");
-    console.log(card);
+
     const productsImg = card.querySelector(".products-img");
     productsImg.classList.add("active-img");
 
@@ -89,10 +76,10 @@ productContainer.addEventListener('click', (e) => {
     // Update UI
     renderButton(button, quantity);
 
-    
-    // cart items
     const id = button.dataset.id;
     const price = Number(button.dataset.price);
+    const name = card.querySelector("p").textContent;
+    const src = card.querySelector(".products-img").src;
 
     // Check if item already exists
     const existingItem = cart.find(item => item.id === id);
@@ -100,7 +87,7 @@ productContainer.addEventListener('click', (e) => {
     if (existingItem) {
         existingItem.qty = quantity;
     } else {
-        cart.push({ id, price, qty: quantity });
+        cart.push({ id, name, price, qty: quantity, src });
     }
 
     // Remove item if qty becomes 0
@@ -109,17 +96,8 @@ productContainer.addEventListener('click', (e) => {
     }
 
     renderCart();
-
-    // cartContainer.innerHTML = `
-    //     <h2>Your Cart</h2>
-
-    //     <ul class="cart-list">
-    //         <li>${card.textContent}</li>
-    //     </ul>
-    // ` 
-    // productContainer.append(cartContainer);
-
 });
+
 
 function renderButton(button, qty) {
 
@@ -147,153 +125,74 @@ function renderButton(button, qty) {
     }
 }
 
-    // const productListing = document.querySelector(".product-listing");
-
-    // creating cart container
-
-    // const cartContainer = document.createElement("div");
-    // cartContainer.classList.add("right-cart-section");
-
     const cartContainer = document.querySelector(".right-cart-section");
 
     const cartContent = document.createElement("div");
     cartContent.classList.add("cart-container");
     
     cartContainer.appendChild(cartContent);
-
-    // cartContainer.innerHTML = `
-    //     <div class="cart-section">
-    //         <h2>Your Cart (0)</h2>
-    //         <figure class="cart-image">
-    //             <img src="./assets/images/illustration-empty-cart.svg" alt="">
-    //             <span>Your added items will appear here</span>
-    //         </figure> 
-    //     </div>
-    // `
-    // productListing.appendChild(cartContainer);
-
     renderCart();
 
-    // const cartWrapper = document.createElement("div");
-    // cartWrapper.classList.add("cart-wrapper");
 
-    // cartContainer.appendChild(cartWrapper);
+function renderCart() {
+    const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
 
-
-    // function renderCart() {
-    //     const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-
-    //     const orderTotal = cart.reduce(
-    //         (sum, item) => sum + item.qty * item.price,
-    //         0
-    //     );
-
-    //     if (cart.length === 0) {
-    //     cartContent.innerHTML = `
-    //         <figure class="cart-image">
-    //             <img src="./assets/images/illustration-empty-cart.svg">
-    //             <span>Your added items will appear here</span>
-    //         </figure>
-    //     `;
-    //     return;
-    // }
-
-    // cartContent.innerHTML = `
-    //     <h2>Your Cart (${totalItems})</h2>
-
-    //     <ul class="cart-list">
-    //         ${cart.map(item => `
-    //             <li class="cart-item">
-    //             <div class="cart-left">
-    //                 <p class="item-name">${item.id}</p>
-    //                 <div class="item-meta">
-    //                     <span class="qty">${item.qty}x</span>
-    //                     <span class="price">@ $${item.price.toFixed(2)}</span>
-    //                     <span class="subtotal">$${(item.qty * item.price).toFixed(2)}</span>
-    //                 </div>
-    //             </div>
-    //             <div class="cart-right">
-    //                 <img class="remove-btn" src="./assets/images/icon-remove-item.svg" 
-    //                 data-id="${item.id}">
-    //             </div>
-    //     </li>
-    //     `).join("")}
-    //     </ul>
-
-    //     <div class="order-total">
-    //         <span>Order Total</span>
-    //         <strong>$${orderTotal.toFixed(2)}</strong>
-    //     </div>
-
-    //     <div class="delivery">
-    //         <img src="./assets/images/icon-carbon-neutral.svg">
-    //         <span>This is a <strong>carbon-neutral</strong> delivery</span>
-    //     </div>
-
-    // <button class="confirm-btn">Confirm Order</button>
-    // `;  
-    // }
-
-
-    function renderCart() {
-  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
-
-  const orderTotal = cart.reduce(
+    const orderTotal = cart.reduce(
     (sum, item) => sum + item.qty * item.price,
-    0
-  );
+        0
+    );
 
-  // EMPTY CART
-  if (cart.length === 0) {
+    // EMPTY CART
+    if (cart.length === 0) {
+        cartContent.innerHTML = `
+        <h2>Your Cart (0)</h2>
+        <figure class="cart-image">
+            <img src="./assets/images/illustration-empty-cart.svg">
+            <span>Your added items will appear here</span>
+        </figure>
+        `;
+        return;
+    }
+
+    // FILLED CART
     cartContent.innerHTML = `
-      <h2>Your Cart (0)</h2>
-      <figure class="cart-image">
-        <img src="./assets/images/illustration-empty-cart.svg">
-        <span>Your added items will appear here</span>
-      </figure>
-    `;
-    return;
-  }
-
-  // FILLED CART
-  cartContent.innerHTML = `
-    <h2>Your Cart (${totalItems})</h2>
+        <h2>Your Cart (${totalItems})</h2>
 
     <ul class="cart-list">
-      ${cart.map(item => `
+        ${cart.map(item => `
         <li class="cart-item">
-          <div class="cart-left">
-            <p class="item-name">${item.id}</p>
-            <div class="item-meta">
-              <span class="qty">${item.qty}x</span>
-              <span class="price">@ $${item.price.toFixed(2)}</span>
-              <span class="subtotal">$${(item.qty * item.price).toFixed(2)}</span>
+            <div class="cart-left">
+                <p class="item-name">${item.id}</p>
+                <div class="item-meta">
+                    <span class="qty">${item.qty}x</span>
+                    <span class="price">@ $${item.price.toFixed(2)}</span>
+                    <span class="subtotal">$${(item.qty * item.price).toFixed(2)}</span>
+                </div>
             </div>
-          </div>
 
-          <div class="cart-right">
-            <img class="remove-btn"
-              src="./assets/images/icon-remove-item.svg"
-              data-id="${item.id}">
-          </div>
+            <div class="cart-right">
+                <img class="remove-btn"
+                src="./assets/images/icon-remove-item.svg"
+                data-id="${item.id}">
+            </div>
         </li>
 
         <hr class="hr-rule">
-      `).join("")}
+    `).join("")}
     </ul>
 
     <div class="order-total">
-      <span>Order Total</span>
-      <strong>$${orderTotal.toFixed(2)}</strong>
+        <span>Order Total</span>
+        <strong>$${orderTotal.toFixed(2)}</strong>
     </div>
 
     <div class="delivery">
-      <img src="./assets/images/icon-carbon-neutral.svg">
-      <span>This is a <strong>carbon-neutral</strong> delivery</span>
+        <img src="./assets/images/icon-carbon-neutral.svg">
+        <span>This is a <strong>carbon-neutral</strong> delivery</span>
     </div>
 
     <button class="confirm-btn">Confirm Order</button>
-  `;
+`;
 }
 
 
@@ -310,3 +209,81 @@ cartContainer.addEventListener("click", (e) => {
 
   renderCart();
 });
+
+
+function showModal() {
+
+    // create modal content dynamically
+    modal.innerHTML = `
+        <div class="modal-content">
+            <img class="confirm-order-img" src="./assets/images/icon-order-confirmed.svg">
+            <h2>Order Confirmed</h2>
+            <p>We hope you enjoy your food!</p>
+
+            <div class="modal-items-list">
+                ${generateOrderItems()}
+            </div>
+
+            <div class="modal-total">
+                <span>Order Total</span>
+                <strong>$${calculateTotal()}</strong>
+            </div>
+
+            <button class="start-new-btn">Start New Order</button>
+        </div>
+    `;
+
+    modal.classList.remove("close-modal");
+}
+
+modal.addEventListener("click", function (e) {
+    if (e.target.classList.contains("start-new-btn")) {
+        cart.length = 0;         
+        renderCart();            // re-render cart
+        modal.classList.add("close-modal");  // hide modal
+    }
+
+    // Close when clicking outside modal
+    if (e.target === modal) {
+        modal.classList.add("close-modal");
+    }
+});
+
+cartContainer.addEventListener("click", (e) => {
+  if (e.target.classList.contains("confirm-btn")) {
+    showModal();
+  }
+});
+
+function generateOrderItems() {
+    return cart.map(item => `
+        <div class="modal-item">
+            <div class="modal-inner">
+                <img class="modal-img" src="${item.src}" 
+                alt="${item.name}">
+
+                <div class="item-info">
+                    <span class="modal-item-name">${item.name}</span>
+
+                    <div class="modal-meta">   
+                        <span>
+                            <span class="qty">${item.qty}x</span>
+                            <span class="price">@ $${item.price.toFixed(2)}</span>
+                        </span>
+                        
+                    </div>
+                </div>
+            </div>
+            <span class="subtotal">
+                $${(item.price * item.qty).toFixed(2)}
+            </span>
+        </div>
+    `).join("");
+}
+
+function calculateTotal() {
+    return cart
+        .reduce((total, item) => total + item.price * item.qty, 0)
+        .toFixed(2);
+}
+
